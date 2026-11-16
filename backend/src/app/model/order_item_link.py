@@ -10,10 +10,18 @@ from backend.src.app.model.order import Order
 # ==========================================
 
 class OrderItemLink(SQLModel, table=True):
-    """Link table for Order and FoodItem."""
-    order_id: Optional[int] = Field(default=None, foreign_key="order.id", primary_key=True)
-    food_item_id: Optional[int] = Field(default=None, foreign_key="fooditem.id", primary_key=True)
-    
+    """
+    Association object between Order and FoodItem, carrying per-line data.
+
+    Composite PK (order_id, food_item_id) enforces:
+      - An order may contain **at most one line per food item**.
+      - To order N units of the same item, use a single line with quantity=N.
+      - A food item may appear in many different orders (one line per order).
+
+    Deleting an order or a food item cascades to its link rows.
+    """
+    order_id: int = Field(foreign_key="order.id", primary_key=True)
+    food_item_id: int = Field(foreign_key="fooditem.id", primary_key=True)
     quantity: int = Field(default=1, gt=0)
     unit_price: Decimal = Field(max_digits=10, decimal_places=2, gt=0)
 
