@@ -1,5 +1,5 @@
 from decimal import Decimal
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import List, Optional
 from sqlmodel import Field, Relationship, SQLModel
 from backend.src.app.model.customer import Customer
@@ -25,8 +25,8 @@ class Order(SQLModel, table=True):
     amount: Decimal = Field(max_digits=12, decimal_places=2, gt=0)
 
     # Timestamps
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow, sa_column_kwargs={'onupdate': datetime.utcnow})
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     # Relationships
     customer: Optional[Customer] = Relationship(back_populates='orders')
