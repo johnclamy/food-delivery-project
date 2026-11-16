@@ -1,3 +1,4 @@
+from decimal import Decimal
 from datetime import datetime
 from typing import List, Optional
 from sqlmodel import Field, Relationship, SQLModel
@@ -21,7 +22,7 @@ class Order(SQLModel, table=True):
 
     # Order details
     status: OrderStatus = Field(default=OrderStatus.PREPARING, index=True)
-    amount: float = Field(gt=0)
+    amount: Decimal = Field(max_digits=12, decimal_places=2, gt=0)
 
     # Timestamps
     created_at: datetime = Field(default_factory=datetime.utcnow)

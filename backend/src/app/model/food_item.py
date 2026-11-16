@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Optional
 from sqlmodel import Field, SQLModel
 
@@ -11,5 +12,5 @@ class FoodItem(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(index=True)
     description: Optional[str] = None
-    price: float = Field(gt=0)
+    price: Decimal = Field(max_digits=10, decimal_places=2, gt=0)
     is_available: bool = Field(default=True)
