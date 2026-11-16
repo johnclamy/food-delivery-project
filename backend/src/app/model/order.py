@@ -1,7 +1,7 @@
 from decimal import Decimal
 from datetime import UTC, datetime
 from typing import List, Optional
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, Relationship, SQLModel, ForeignKeyConstraint
 from backend.src.app.model.customer import Customer
 from backend.src.app.model.customer_address import Address
 from backend.src.app.model.enums import OrderStatus
@@ -32,3 +32,11 @@ class Order(SQLModel, table=True):
     customer: Optional[Customer] = Relationship(back_populates='orders')
     address: Optional[Address] = Relationship(back_populates='orders')
     items: List['OrderItemLink'] = Relationship(back_populates='order')
+
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["address_id", "customer_id"],
+            ["address.id", "address.customer_id"],
+            name="fk_order_address_belongs_to_customer",
+        ),
+    )
