@@ -1,5 +1,5 @@
 from typing import List, Optional
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, Relationship, SQLModel, UniqueConstraint
 from backend.src.app.model.customer import Customer
 from backend.src.app.model.order import Order
 
@@ -21,3 +21,6 @@ class Address(SQLModel, table=True):
     customer: Optional[Customer] = Relationship(back_populates="addresses")
     orders: List["Order"] = Relationship(back_populates="address")
 
+    __table_args__ = (
+        UniqueConstraint("id", "customer_id", name="uq_address_id_customer"),
+    )
