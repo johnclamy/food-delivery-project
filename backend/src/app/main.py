@@ -1,8 +1,23 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
 import uvicorn
 
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup code here
+    print("🚀 Starting up the FastAPI application...")
+    yield
+    # Shutdown code here
+    print("🪂 Shutting down the FastAPI application...")
+
+
+app = FastAPI(
+    title="Food Delivery App",
+    description="This is a food delivery application built with FastAPI.",
+    version="0.1.0",
+    lifespan=lifespan
+)
 
 
 @app.get('/')
