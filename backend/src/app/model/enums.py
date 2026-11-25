@@ -6,11 +6,12 @@ import enum
 # ==========================================
 
 class OrderStatus(str, enum.Enum):
-    PREPARING = 'Preparing'
-    PICKED_UP = 'Picked up'
-    IN_TRANSIT = 'In transit'
-    ARRIVED = 'Arrived'
-    DELIVERED = 'Delivered'
+    PREPARING = "preparing"
+    READY = "ready"
+    OUT_FOR_DELIVERY = "out_for_delivery"
+    DELIVERED = "delivered"
+    CANCELLED = "cancelled"
+    REFUNDED = "refunded"
 
 
 # =========================================
