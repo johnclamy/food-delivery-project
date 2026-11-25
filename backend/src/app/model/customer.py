@@ -5,7 +5,7 @@ from sqlalchemy import Index, func
 from sqlmodel import Column, DateTime, Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
-    from backend.src.app.model.customer_address import Address
+    from backend.src.app.model.address import Address
     from backend.src.app.model.order import Order
 
 

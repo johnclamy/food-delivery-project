@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from typing import List, Optional
 from sqlmodel import Field, Relationship, SQLModel, ForeignKeyConstraint
 from backend.src.app.model.customer import Customer
-from backend.src.app.model.customer_address import Address
+from backend.src.app.model.address import Address
 from backend.src.app.model.enums import OrderStatus
 from backend.src.app.model.order_item_link import OrderItemLink
 
