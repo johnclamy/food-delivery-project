@@ -19,6 +19,7 @@ class Address(SQLModel, table=True):
 
     __tablename__ = "address" # type: ignore
     __table_args__ = (
+        UniqueConstraint("id", "customer_id", name="uq_address_id_customer"),
         # A customer can't have two addresses with the same label ("Home" twice).
         UniqueConstraint("customer_id", "label", name="uq_address_customer_label"),
         # Fast lookup of a customer's addresses.
@@ -33,16 +34,14 @@ class Address(SQLModel, table=True):
     )
     
     label: PropertyLocationLabel = Field(default=PropertyLocationLabel.HOME)
-    number: str
-    street: str
-    city: str
-    postcode: str
-    is_default: bool = Field(default=False)
+    street: str= Field(max_length=200)
+    town: str = Field(max_length=120)
+    city: str = Field(max_length=120)
+    postal_code: str = Field(max_length=32)
 
     # Relationships
     customer: Optional[Customer] = Relationship(back_populates="addresses")
-    orders: List["Order"] = Relationship(back_populates="address")
-
-    __table_args__ = (
-        UniqueConstraint("id", "customer_id", name="uq_address_id_customer"),
+    orders: List["Order"] = Relationship(
+        back_populates="address",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"},
     )
