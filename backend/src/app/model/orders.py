@@ -7,8 +7,8 @@ from sqlmodel import Column, DateTime, Field, Relationship, SQLModel, ForeignKey
 from backend.src.app.model.enums import OrderStatus
 
 if TYPE_CHECKING:
-    from backend.src.app.model.customer import Customer
-    from backend.src.app.model.address import Address
+    from backend.src.app.model.customers import Customer
+    from backend.src.app.model.delivery_address import Address
     from backend.src.app.model.order_item_link import OrderItemLink
 
 

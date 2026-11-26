@@ -5,7 +5,7 @@ from sqlmodel import Field, Relationship, SQLModel, UniqueConstraint
 from backend.src.app.model.enums import PropertyLocationLabel
 
 if TYPE_CHECKING:
-    from backend.src.app.model.customer import Customer
+    from backend.src.app.model.customers import Customer
     from backend.src.app.model.orders import Order
 
 

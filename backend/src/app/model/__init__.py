@@ -1,5 +1,5 @@
 from .enums import OrderStatus
 from .food_item import FoodItem
-from .customer import Customer
-from .address import Address
+from .customers import Customer
+from .delivery_address import Address
 from .orders import Order
