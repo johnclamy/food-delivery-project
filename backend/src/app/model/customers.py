@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 class Customer(SQLModel, table=True):
     """Represents the user/guest placing the order."""
 
-    __tablename__ = "customer" # type: ignore
+    __tablename__ = "customers" # type: ignore
     __table_args__ = (
         Index("ix_customer_phone", func.lower("phone")),
         Index("ix_customer_created_at", "created_at"),

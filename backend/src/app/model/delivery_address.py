@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 class Address(SQLModel, table=True):
     """Represents a specific delivery location saved by a customer."""
 
-    __tablename__ = "address" # type: ignore
+    __tablename__ = "delivery_addresses" # type: ignore
     __table_args__ = (
         UniqueConstraint("id", "customer_id", name="uq_address_id_customer"),
         # A customer can't have two addresses with the same label ("Home" twice).
