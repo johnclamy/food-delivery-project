@@ -1,12 +1,16 @@
 from __future__ import annotations
-from datetime import UTC, datetime
-from typing import List, TYPE_CHECKING
-from sqlalchemy import Index, func
+from datetime import datetime
+from typing import TYPE_CHECKING
+from sqlalchemy import Index, func, text
 from sqlmodel import Column, DateTime, Field, Relationship, SQLModel
 
+
+# =========================================
+#       RELATIVE IMPORTS (TYPE CHECKING)
+# =========================================
 if TYPE_CHECKING:
-    from backend.src.app.model.delivery_address import Address
-    from backend.src.app.model.orders import Order
+    from .delivery_address import Address
+    from .orders import Order
 
 
 # =========================================
@@ -18,18 +22,18 @@ class Customer(SQLModel, table=True):
 
     __tablename__ = "customers" # type: ignore
     __table_args__ = (
-        Index("ix_customer_phone", func.lower("phone")),
-        Index("ix_customer_created_at", "created_at"),
+        Index("ix_customers_lower_phone", text("lower(phone)")),
+        Index("ix_customers_created_at", "created_at"),
     )
 
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True, max_length=120)
-    phone: str = Field(unique=True, max_length=20)
+    phone: str = Field(max_length=20)
     email: str | None = Field(
         default=None,
         max_length=154,
         index=True,
-        unique=True
+        unique=True,
     )
 
     # --- Soft-delete / status ---
@@ -54,11 +58,11 @@ class Customer(SQLModel, table=True):
     )
 
     # Relationships
-    addresses: List["Address"] = Relationship(
+    addresses: list["Address"] = Relationship(
         back_populates="customer",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"},
     )
-    orders: List["Order"] = Relationship(
+    orders: list["Order"] = Relationship(
         back_populates="customer",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"},
     )

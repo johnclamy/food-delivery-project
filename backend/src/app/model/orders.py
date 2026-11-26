@@ -1,15 +1,19 @@
 from __future__ import annotations
 from decimal import Decimal
 from datetime import datetime
-from typing import TYPE_CHECKING, List
-from sqlalchemy import Index, Numeric, func
-from sqlmodel import Column, DateTime, Field, Relationship, SQLModel, ForeignKeyConstraint
+from typing import TYPE_CHECKING
+from sqlalchemy import CheckConstraint, ForeignKeyConstraint, Index, Numeric, func
+from sqlmodel import Column, DateTime, Field, Relationship, SQLModel
 from backend.src.app.model.enums import OrderStatus
 
+
+# =========================================
+#       RELATIVE IMPORTS (TYPE CHECKING)
+# =========================================
 if TYPE_CHECKING:
-    from backend.src.app.model.customers import Customer
-    from backend.src.app.model.delivery_address import Address
-    from backend.src.app.model.order_item_link import OrderItemLink
+    from .customers import Customer
+    from .delivery_address import Address
+    from .order_item_link import OrderItemLink
 
 
 # ==========================================
@@ -21,14 +25,13 @@ class Order(SQLModel, table=True):
 
     __tablename__ = "orders" # type: ignore
     __table_args__ = (
-        ForeignKeyConstraint(  #  *** MUST BE ENABLED ON DB CONNECTION ***
+        ForeignKeyConstraint(  # *** Requires PRAGMA foreign_keys = ON in SQLite ***
             ["address_id", "customer_id"],
-            ["address.id", "address.customer_id"],
+            ["delivery_addresses.id", "delivery_addresses.customer_id"],
             name="fk_order_address_belongs_to_customer",
         ),
-        Index("ix_order_customer_id", "customer_id"),
+        CheckConstraint("amount > 0", name="ck_orders_amount_positive"),
         Index("ix_order_address_id", "address_id"),
-        Index("ix_order_status", "status"),
         Index("ix_order_created_at", "created_at"),
         # Common access pattern: "customer's latest orders"
         Index("ix_order_customer_created", "customer_id", "created_at"),
@@ -38,14 +41,14 @@ class Order(SQLModel, table=True):
 
     # Foreign keys linking to Customer and Address
     customer_id: int = Field(
-        foreign_key="customer.id",
+        foreign_key="customers.id",
         nullable=False,
-        ondelete="RESTRICT",   # don't lose orders if a customer row is deleted
+        ondelete="RESTRICT",   # Don't lose orders if a customer row is deleted
     )
     address_id: int = Field(
-        foreign_key="address.id",
+        foreign_key="delivery_addresses.id",
         nullable=False,
-        ondelete="RESTRICT",   # addresses referenced by orders can't be hard-deleted
+        ondelete="RESTRICT",   # Addresses referenced by orders can't be hard-deleted
     )
 
     # Order details
@@ -53,14 +56,12 @@ class Order(SQLModel, table=True):
 
     # Money as Decimal — never float. `amount` = total, `currency` = ISO 4217.
     amount: Decimal = Field(
-        max_digits=12,
-        decimal_places=2,
         sa_column=Column(Numeric(12, 2), nullable=False),
     )
     currency: str = Field(default="GBP", max_length=3)
 
     # Optional reference / receipt number for external systems.
-    reference: str | None = Field(default=None, max_length=64, unique=True, index=True)
+    reference: str | None = Field(default=None, max_length=64, unique=True)
 
     # --- Timestamps (timezone-aware, server defaults) ---
     created_at: datetime = Field(
@@ -75,10 +76,10 @@ class Order(SQLModel, table=True):
         ),
     )
 
-   # --- Relationships ---
+    # --- Relationships ---
     customer: "Customer" = Relationship(back_populates="orders")
     address: "Address" = Relationship(back_populates="orders")
-    items: List["OrderItemLink"] = Relationship(
+    items: list["OrderItemLink"] = Relationship(
         back_populates="order",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"},
     )
