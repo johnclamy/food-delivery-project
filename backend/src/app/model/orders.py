@@ -1,7 +1,7 @@
 from __future__ import annotations
 from decimal import Decimal
 from datetime import datetime
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, List
 from sqlalchemy import Index, Numeric, func
 from sqlmodel import Column, DateTime, Field, Relationship, SQLModel, ForeignKeyConstraint
 from backend.src.app.model.enums import OrderStatus
@@ -21,7 +21,7 @@ class Order(SQLModel, table=True):
 
     __tablename__ = "orders" # type: ignore
     __table_args__ = (
-        ForeignKeyConstraint(
+        ForeignKeyConstraint(  #  *** MUST BE ENABLED ON DB CONNECTION ***
             ["address_id", "customer_id"],
             ["address.id", "address.customer_id"],
             name="fk_order_address_belongs_to_customer",
@@ -34,7 +34,7 @@ class Order(SQLModel, table=True):
         Index("ix_order_customer_created", "customer_id", "created_at"),
     )
 
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
 
     # Foreign keys linking to Customer and Address
     customer_id: int = Field(
@@ -60,7 +60,7 @@ class Order(SQLModel, table=True):
     currency: str = Field(default="GBP", max_length=3)
 
     # Optional reference / receipt number for external systems.
-    reference: Optional[str] = Field(default=None, max_length=64, unique=True, index=True)
+    reference: str | None = Field(default=None, max_length=64, unique=True, index=True)
 
     # --- Timestamps (timezone-aware, server defaults) ---
     created_at: datetime = Field(
@@ -76,8 +76,8 @@ class Order(SQLModel, table=True):
     )
 
    # --- Relationships ---
-    customer: Optional["Customer"] = Relationship(back_populates="orders")
-    address: Optional["Address"] = Relationship(back_populates="orders")
+    customer: "Customer" = Relationship(back_populates="orders")
+    address: "Address" = Relationship(back_populates="orders")
     items: List["OrderItemLink"] = Relationship(
         back_populates="order",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"},

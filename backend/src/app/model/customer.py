@@ -1,6 +1,6 @@
 from __future__ import annotations
 from datetime import UTC, datetime
-from typing import List, Optional, TYPE_CHECKING
+from typing import List, TYPE_CHECKING
 from sqlalchemy import Index, func
 from sqlmodel import Column, DateTime, Field, Relationship, SQLModel
 
@@ -22,10 +22,10 @@ class Customer(SQLModel, table=True):
         Index("ix_customer_created_at", "created_at"),
     )
 
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True, max_length=120)
     phone: str = Field(unique=True, max_length=20)
-    email: Optional[str] = Field(
+    email: str | None = Field(
         default=None,
         max_length=154,
         index=True,

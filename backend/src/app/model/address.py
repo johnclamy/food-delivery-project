@@ -1,12 +1,11 @@
 from __future__ import annotations
-from datetime import datetime
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, List
 from sqlalchemy import Index, func
-from sqlmodel import Column, DateTime, Field, Relationship, SQLModel, UniqueConstraint
+from sqlmodel import Field, Relationship, SQLModel, UniqueConstraint
+from backend.src.app.model.enums import PropertyLocationLabel
 
 if TYPE_CHECKING:
     from backend.src.app.model.customer import Customer
-    from backend.src.app.model.enums import PropertyLocationLabel
     from backend.src.app.model.orders import Order
 
 
@@ -26,7 +25,7 @@ class Address(SQLModel, table=True):
         Index("ix_address_customer_id", "customer_id"),
     )
 
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     customer_id: int = Field(
         foreign_key="customer.id",
         nullable=False,
@@ -40,7 +39,7 @@ class Address(SQLModel, table=True):
     postal_code: str = Field(max_length=32)
 
     # Relationships
-    customer: Optional[Customer] = Relationship(back_populates="addresses")
+    customer: Customer = Relationship(back_populates="addresses")
     orders: List["Order"] = Relationship(
         back_populates="address",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"},
