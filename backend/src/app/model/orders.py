@@ -4,11 +4,11 @@ from datetime import datetime
 from typing import TYPE_CHECKING, List, Optional
 from sqlalchemy import Index, Numeric, func
 from sqlmodel import Column, DateTime, Field, Relationship, SQLModel, ForeignKeyConstraint
+from backend.src.app.model.enums import OrderStatus
 
 if TYPE_CHECKING:
     from backend.src.app.model.customer import Customer
     from backend.src.app.model.address import Address
-    from backend.src.app.model.enums import OrderStatus
     from backend.src.app.model.order_item_link import OrderItemLink
 
 
