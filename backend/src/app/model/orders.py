@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 class Order(SQLModel, table=True):
     '''Represents what a customer would order from the restaurant menu'''
 
-    __tablename__ = "order" # type: ignore
+    __tablename__ = "orders" # type: ignore
     __table_args__ = (
         ForeignKeyConstraint(
             ["address_id", "customer_id"],

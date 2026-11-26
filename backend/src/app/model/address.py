@@ -7,7 +7,7 @@ from sqlmodel import Column, DateTime, Field, Relationship, SQLModel, UniqueCons
 if TYPE_CHECKING:
     from backend.src.app.model.customer import Customer
     from backend.src.app.model.enums import PropertyLocationLabel
-    from backend.src.app.model.order import Order
+    from backend.src.app.model.orders import Order
 
 
 # ===========================================

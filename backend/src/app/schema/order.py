@@ -7,7 +7,7 @@ from typing import List, Optional
 from pydantic import field_validator
 from sqlmodel import SQLModel
 
-from backend.src.app.model.order import OrderStatus
+from backend.src.app.model.enums import OrderStatus
 from backend.src.app.schema.address import AddressSummary
 from backend.src.app.schema.order_item_link import OrderItemLinkRead, OrderItemLinkCreate
 

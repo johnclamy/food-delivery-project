@@ -6,7 +6,7 @@ from sqlmodel import Column, DateTime, Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
     from backend.src.app.model.address import Address
-    from backend.src.app.model.order import Order
+    from backend.src.app.model.orders import Order
 
 
 # =========================================

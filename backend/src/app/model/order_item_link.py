@@ -2,7 +2,7 @@ from decimal import Decimal
 from typing import Optional
 from sqlmodel import Field, Relationship, SQLModel
 from backend.src.app.model.food_item import FoodItem
-from backend.src.app.model.order import Order
+from backend.src.app.model.orders import Order
 
 
 # ==========================================
