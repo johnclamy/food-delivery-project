@@ -1,11 +1,11 @@
-import enum
+from enum import StrEnum
 
 
 # ==========================================
-#        ORDER STATUS ENUM DEFINITION            
+#        ORDER STATUS ENUM DEFINITION
 # ==========================================
 
-class OrderStatus(str, enum.Enum):
+class OrderStatus(StrEnum):
     PREPARING = "preparing"
     READY = "ready"
     OUT_FOR_DELIVERY = "out_for_delivery"
@@ -15,10 +15,10 @@ class OrderStatus(str, enum.Enum):
 
 
 # =========================================
-#  PROPERTY LOCATION LABEL ENUM DEFINITION            
+#  PROPERTY LOCATION LABEL ENUM DEFINITION
 # =========================================
 
-class PropertyLocationLabel(str, enum.Enum):
-    HOME = 'Home'
-    WORK = 'Work'
-    GYM = 'Gym'
+class PropertyLocationLabel(StrEnum):
+    HOME = "home"
+    WORK = "work"
+    GYM = "gym"
