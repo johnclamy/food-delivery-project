@@ -37,4 +37,3 @@ class AddressRead(AddressBase):
     """Schema for returning address data to the client (GET)."""
     id: int
     customer_id: int
-
