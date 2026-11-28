@@ -1,64 +1,53 @@
 from __future__ import annotations
-
 from datetime import datetime
 from decimal import Decimal
-from typing import List, Optional
-
-from pydantic import field_validator
+from pydantic import Field
 from sqlmodel import SQLModel
 
-from backend.src.app.model.enums import OrderStatus
-from backend.src.app.schema.address import AddressSummary
-from backend.src.app.schema.order_item_link import OrderItemLinkRead, OrderItemLinkCreate
+from ..model.enums import OrderStatus
+from .types import CurrencyCode, OptionalReferenceCode, PositiveDecimal, ReferenceCode
+from .order_item_link import OrderItemCreate, OrderItemRead
 
 
 class OrderBase(SQLModel):
-    status: OrderStatus = OrderStatus.PREPARING
-    currency: str = "GBP"
-
-    @field_validator("currency")
-    @classmethod
-    def _validate_currency(cls, v: str) -> str:
-        if len(v) != 3 or not v.isalpha():
-            raise ValueError("currency must be ISO 4217 (e.g. 'GBP', 'USD')")
-        return v.upper()
+    """Fields that represent the core state of an order."""
+    customer_id: int
+    address_id: int
+    status: OrderStatus
+    amount: PositiveDecimal
+    currency: CurrencyCode
+    reference: ReferenceCode | None = None
 
 
-class OrderCreate(OrderBase):
-    """Payload for POST /orders.
-
-    Note: `amount` is NOT accepted from the client — it must be computed
-    server-side from `items` to prevent price tampering.
+class OrderCreate(SQLModel):
+    """
+    Schema for creating a new order (POST).
+    SECURITY: Client does NOT send 'amount', 'currency', or 'status'.
+    The backend calculates the total amount from the items and defaults 
+    status to PREPARING.
     """
     customer_id: int
     address_id: int
-    items: List[OrderItemLinkCreate] = []
-
+    reference: ReferenceCode | None = None
+    items: list[OrderItemCreate] = Field(
+        min_length=1, 
+        description="An order must contain at least one item"
+    )
 
 
 class OrderUpdate(SQLModel):
-    """Payload for PATCH — only status is client-mutable; everything else is system-owned."""
-    status: Optional[OrderStatus] = None
+    """
+    Schema for updating an existing order (PATCH).
+    Typically used by staff/driver apps to advance the status, 
+    or to add a delivery reference.
+    """
+    status: OrderStatus | None = None
+    reference: ReferenceCode | None = None
 
 
 class OrderRead(OrderBase):
+    """Schema for returning order data to the client (GET)."""
     id: int
-    customer_id: int
-    address_id: int
-    amount: Decimal
-    reference: Optional[str] = None
     created_at: datetime
     updated_at: datetime
-
-    # Embedded views
-    address: Optional[AddressSummary] = None
-    items: List[OrderItemLinkRead] = []
-
-
-class OrderSummary(SQLModel):
-    """Lightweight version for embedding in Customer responses."""
-    id: int
-    status: OrderStatus
-    amount: Decimal
-    currency: str
-    created_at: datetime
+    items: list[OrderItemRead] = Field(default_factory=list)
